@@ -337,10 +337,8 @@ class PDFFindController {
     return true;
   }
 
-  _calculatePhraseMatch(query, pageIndex, pageContent, entireWord) {
-    const matches = [];
-    const queryLen = query.length;
-
+  //Flatirons: modularize query logic
+  _handleQuery(query, pageIndex, pageContent, entireWord, matches, queryLen ){
     let matchIdx = -queryLen;
     while (true) {
       matchIdx = pageContent.indexOf(query, matchIdx + queryLen);
@@ -352,6 +350,23 @@ class PDFFindController {
       }
       matches.push(matchIdx);
     }
+
+  }
+
+  _calculatePhraseMatch(query, pageIndex, pageContent, entireWord) {
+    const matches = [];
+    const queryLen = query.length;
+
+    this._handleQuery(query, pageIndex, pageContent, entireWord, matches, queryLen );
+
+    //Flatirons: query using dash and em dash
+    if (query.indexOf('-') > -1) {
+      this._handleQuery(query.replace(/-/g, '−'), pageIndex, pageContent, entireWord, matches, queryLen);
+    } else if (query.indexOf('−') > -1) {
+      this._handleQuery(query.replace(/−/g, '-'), pageIndex, pageContent, entireWord, matches, queryLen);
+    }
+
+    matches.sort();
     this._pageMatches[pageIndex] = matches;
   }
 

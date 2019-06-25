@@ -72,6 +72,11 @@ function isThai(charCode) {
  * https://hg.mozilla.org/mozilla-central/file/tip/intl/lwbrk/WordBreaker.cpp
  */
 function getCharacterType(charCode) {
+  //Flatirons: treat em dash as punctionation. Similar to dash.
+  if (charCode === /* em dash = */ 0x2212) {
+    return CharacterType.PUNCT;
+  }
+
   if (isAlphabeticalScript(charCode)) {
     if (isAscii(charCode)) {
       if (isAsciiSpace(charCode)) {
